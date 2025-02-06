@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Requests\API;
+use Illuminate\Validation\Rule;
 
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -11,7 +12,7 @@ class BusRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,7 +23,14 @@ class BusRequest extends FormRequest
     public function rules(): array
     {
         return [
-            //
+            'number' => 'required|string|unique:buses,number',
+            'number'       => [
+                'required',
+                'integer',
+                Rule::unique('buses', 'number')->ignore($this->route('bus')),
+            ],
+            'capacity' => 'required|integer|min:1',
+            'type' => 'required|string|max:255',
         ];
     }
 }

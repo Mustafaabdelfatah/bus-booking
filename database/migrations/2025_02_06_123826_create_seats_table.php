@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('seats', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('bus_id')->constrained()->onDelete('cascade');
+            $table->string('seat_number');
+            $table->boolean('is_reserved')->default(false);
             $table->timestamps();
         });
     }

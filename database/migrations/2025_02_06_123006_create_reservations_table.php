@@ -13,11 +13,12 @@ return new class extends Migration
     {
         Schema::create('reservations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('trip_id')->constrained()->onDelete('cascade');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->integer('total_passengers');
-            $table->decimal('total_price', 8, 2);
-            $table->enum('status', ['pending', 'confirmed', 'cancelled'])->default('pending');
+            $table->foreignId('client_id')->constrained()->onDelete('cascade');
+            $table->foreignId('travel_id')->constrained()->onDelete('cascade');
+            $table->string('passenger_type');
+            $table->decimal('price', 10, 2);
+            $table->boolean('is_paid')->default(false);
+            $table->string('seat_number')->nullable();
             $table->timestamps();
         });
     }

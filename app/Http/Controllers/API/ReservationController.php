@@ -2,48 +2,53 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Http\Controllers\Controller;
+use App\Models\Reservation;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Pipeline\Pipeline;
+use App\Http\Controllers\Controller;
+use App\Http\Requests\Global\PageRequest;
+use App\Http\Requests\API\ReservationRequest;
+use App\Http\Requests\Global\DeleteAllRequest;
+use App\Http\Resources\API\ReservationResource;
 
 class ReservationController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(PageRequest $request): JsonResponse
     {
-        //
+        $query = app(Pipeline::class)
+            ->send(Reservation::query())
+            ->through([])
+            ->thenReturn();
+        return successResponse(fetchData($query, $request->pageSize, ReservationResource::class));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function store(ReservationRequest $request): JsonResponse
     {
-        //
+        $reservation = Reservation::create($request->validated());
+        return successResponse(new ReservationResource($reservation), __('api.created_success'));
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(Reservation $reservation): JsonResponse
     {
-        //
+        return successResponse(new ReservationResource($reservation));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(ReservationRequest $request, Reservation $reservation): JsonResponse
     {
-        //
+        $reservation->update($request->validated());
+        return successResponse(new ReservationResource($reservation), __('api.updated_success'));
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy(Reservation $reservation): JsonResponse
     {
-        //
+        $reservation->delete();
+        return successResponse(msg: __('api.deleted_success'));
+    }
+
+    public function destroyAll(DeleteAllRequest $request): JsonResponse
+    {
+        Reservation::whereIn('id', $request->ids)->delete();
+        return successResponse(msg: __('api.deleted_success'));
     }
 }

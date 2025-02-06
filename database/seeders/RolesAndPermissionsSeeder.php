@@ -43,8 +43,5 @@ class RolesAndPermissionsSeeder extends Seeder
             'name' => 'admin',
             'password' => '123456',
         ])->assignRole('admin');
-
-
-
     }
 }

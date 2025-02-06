@@ -54,26 +54,5 @@ class ClientController extends Controller
         Client::whereIn('id', $request->ids)->delete();
         return successResponse(msg: __('api.deleted_success'));
     }
-    public function projects(): JsonResponse
-    {
-        $projects = auth('client')->user()->projects()->with('phases')->get();
-        return successResponse(ProjectResource::collection($projects), __('api.created_success'));
-    }
 
-    public function myServices(): JsonResponse
-    {
-        $subscriptions = auth('client')->user()->subscriptions()->with('service')->get();
-
-        return successResponse(
-            $subscriptions->map(function ($subscription) {
-                return [
-                    'name' => $subscription->service->name,
-                    'details' => $subscription->service->details,
-                    'price' => $subscription->price,
-                    'start_date' => $subscription->start_date->format('Y-m-d'),
-                    'end_date' => $subscription->end_date->format('Y-m-d'),
-                ];
-            }),
-        );
-    }
 }

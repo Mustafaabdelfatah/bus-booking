@@ -1,16 +1,19 @@
 <?php
 
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\API\BusController;
 use App\Http\Controllers\API\HelpController;
+use App\Http\Controllers\API\SeatController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\API\ClientController;
+use App\Http\Controllers\API\TravelController;
 use App\Http\Controllers\API\SettingController;
 use App\Http\Controllers\API\EmployeeController;
 use App\Http\Controllers\API\User\RoleController;
+use App\Http\Controllers\API\ReservationController;
+use App\Http\Controllers\PriceCalculatorController;
 use App\Http\Controllers\API\User\PermissionController;
-
 
 /*
 |--------------------------------------------------------------------------
@@ -27,9 +30,7 @@ Route::middleware(['auth:client'])->group(function () {
 
 Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('settings', [SettingController::class, 'generalSettings']);
-
     Route::get('help-enums', [HelpController::class, 'enums']);
-
 
     /*
     |--------------------------------------------------------------------------
@@ -47,8 +48,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::delete('employees/delete-all', [EmployeeController::class, 'destroyAll']);
     Route::APIResource('employees', EmployeeController::class);
 
-
-     /*
+    /*
     |--------------------------------------------------------------------------
     | Roles Routes
     |--------------------------------------------------------------------------
@@ -56,6 +56,38 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::delete('roles/delete-all', [RoleController::class, 'destroyAll']);
     Route::APIResource('roles', RoleController::class);
     Route::APIResource('permissions', PermissionController::class);
+
+    /**
+     * |--------------------------------------------------------------------------
+     * | Bus Routes
+     * |--------------------------------------------------------------------------
+     */
+    Route::apiResource('buses', BusController::class);
+
+    /**
+     * |--------------------------------------------------------------------------
+     * | Travels Routes
+     * |--------------------------------------------------------------------------
+     */
+    Route::apiResource('travels', TravelController::class);
+
+    /**
+     * |--------------------------------------------------------------------------
+     * | Reservation Routes
+     * |--------------------------------------------------------------------------
+     */
+    Route::apiResource('reservations', ReservationController::class);
+
+    /**
+     * |--------------------------------------------------------------------------
+     * | seat Routes
+     * |--------------------------------------------------------------------------
+     */
+
+    Route::apiResource('seats', SeatController::class);
+
+
+    Route::post('/calculate-price', [PriceCalculatorController::class, 'calculate']);
 
 
 });

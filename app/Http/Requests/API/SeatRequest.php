@@ -4,7 +4,7 @@ namespace App\Http\Requests\API;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class ReservationRequest extends FormRequest
+class SeatRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,11 +22,11 @@ class ReservationRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'client_id' => 'required|exists:clients,id',
-            'travel_id' => 'required|exists:travels,id',
-            'passenger_type' => 'required|in:adult,child',
-            'price' => 'required|numeric|min:0',
-            'is_paid' => 'boolean',
+            'bus_id' => 'required|exists:travels,id',
+            'seats' => 'required|array|min:1',
+            'seats.*' => 'required|string|distinct|regex:/^[A-Z]\d+$/', // Example: "A1", "B3"
+            'adults' => 'required|integer|min:1',
+            'children' => 'required|integer|min:0',
         ];
     }
 }
