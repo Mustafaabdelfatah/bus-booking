@@ -6,6 +6,7 @@ use App\Models\Client;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Pipeline\Pipeline;
+use App\Filters\Global\NameFilter;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Filters\Global\OrderByFilter;
@@ -21,7 +22,7 @@ class ClientController extends Controller
     {
         $query = app(Pipeline::class)
             ->send(Client::query())
-            ->through([])
+            ->through([NameFilter::class, OrderByFilter::class])
             ->thenReturn();
         return successResponse(fetchData($query, $request->pageSize, ClientResource::class));
     }

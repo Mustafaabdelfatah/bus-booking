@@ -13,6 +13,9 @@ class Travel extends Model
     protected $casts = [
         'departure_time' => 'datetime',
     ];
+
+    protected $table = 'travel';
+
     protected $fillable = [
         'bus_id', 'departure_station', 'arrival_station',
         'departure_time', 'available_seats', 'ticket_price'

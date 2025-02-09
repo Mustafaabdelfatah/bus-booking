@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\API\BookingDepositController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\API\BusController;
@@ -86,8 +87,26 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     Route::apiResource('seats', SeatController::class);
 
+    Route::prefix('seats')->group(function () {
+        Route::post('/reserve', [SeatController::class, 'reserveSeat']); // Reserve a seat
+        Route::post('/cancel', [SeatController::class, 'cancelReservation']); // Cancel a reservation
+        Route::get('/available', [SeatController::class, 'availableSeats']); // Get available seats
+    });
+
+     /**
+     * |--------------------------------------------------------------------------
+     * | deposits Routes
+     * |--------------------------------------------------------------------------
+     */
+
+     Route::apiResource('deposits', BookingDepositController::class);
+
 
     Route::post('/calculate-price', [PriceCalculatorController::class, 'calculate']);
 
+
+    Route::post('reservations/{reservation}/confirm-payment', [ReservationController::class, 'confirmPayment']);
+
+    // Route::get('clients/export/{country}', [ReservationController::class, 'exportByCountry']);
 
 });

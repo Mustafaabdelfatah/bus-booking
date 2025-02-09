@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('seats', function (Blueprint $table) {
+        Schema::create('booking_deposits', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('bus_id')->constrained()->onDelete('cascade');
-            $table->string('seat_number'); // Example: A1, A2, B1
-            $table->string('type');
-            $table->string('status');
+            $table->foreignId('employee_id')->constrained('employees')->onDelete('cascade');
+            $table->integer('total_bookings')->default(0);
+            $table->decimal('total_amount', 10, 2)->default(0);
+            $table->boolean('is_settled')->default(false);
             $table->timestamps();
         });
     }
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('seats');
+        Schema::dropIfExists('booking_deposits');
     }
 };

@@ -2,11 +2,9 @@
 
 namespace App\Http\Requests\API;
 
-use App\Enums\SeatTypeEnum;
-use App\Enums\SeatStatusEnum;
 use Illuminate\Foundation\Http\FormRequest;
 
-class SeatRequest extends FormRequest
+class EmployeeRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -24,10 +22,11 @@ class SeatRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'bus_id' => ['required', 'exists:buses,id'],
-            'seat_number' => ['required', 'integer', 'min:1'],
-            'type' => ['required', 'in:' . implode(',', SeatTypeEnum::values())],
-            'status' => ['required', 'in:' . implode(',', SeatStatusEnum::values())],
+            'name'     => 'required|string|max:255',
+            'email'    => 'required|email|unique:employees,email,' . $this->route('employee'),
+            'phone'    => 'nullable|string|max:20',
+            'avatar'   => 'nullable|image|max:2048',
+            'password' => 'nullable|string|min:6',
         ];
     }
 }

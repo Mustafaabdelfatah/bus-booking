@@ -23,10 +23,10 @@ class ReservationRequest extends FormRequest
     {
         return [
             'client_id' => 'required|exists:clients,id',
-            'travel_id' => 'required|exists:travels,id',
+            'travel_id' => 'required|exists:travel,id',
             'passenger_type' => 'required|in:adult,child',
             'price' => 'required|numeric|min:0',
-            'is_paid' => 'boolean',
+            // 'is_paid' => 'boolean',
         ];
     }
 }

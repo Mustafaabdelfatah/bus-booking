@@ -25,8 +25,8 @@ class EmployeeController extends Controller
     public function index(PageRequest $request): JsonResponse
     {
         $query = app(Pipeline::class)
-            ->send(Employee::with('position'))
-            ->through([NameFilter::class, OrderByFilter::class])
+            ->send(Employee::query())
+            ->through([ OrderByFilter::class])
             ->thenReturn();
 
         return successResponse(fetchData($query, $request->pageSize, EmployeeResource::class));

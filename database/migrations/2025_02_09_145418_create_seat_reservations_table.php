@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('seats', function (Blueprint $table) {
+        Schema::create('seat_reservations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('bus_id')->constrained()->onDelete('cascade');
-            $table->string('seat_number'); // Example: A1, A2, B1
-            $table->string('type');
-            $table->string('status');
+            $table->foreignId('travel_id')->constrained()->onDelete('cascade');
+            $table->foreignId('seat_id')->constrained()->onDelete('cascade');
+            $table->foreignId('client_id')->constrained()->onDelete('cascade');
+            $table->string('status')->default('pending');
             $table->timestamps();
         });
     }
@@ -26,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('seats');
+        Schema::dropIfExists('seat_reservations');
     }
 };

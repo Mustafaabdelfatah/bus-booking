@@ -3,9 +3,12 @@
 namespace App\Http\Controllers\API;
 
 use App\Models\Seat;
+use App\Models\Travel;
 use Illuminate\Http\Request;
+use App\Models\SeatReservation;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Pipeline\Pipeline;
+use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\API\SeatRequest;
 use App\Http\Resources\API\SeatResource;
@@ -16,10 +19,7 @@ class SeatController extends Controller
 {
     public function index(PageRequest $request): JsonResponse
     {
-        $query = app(Pipeline::class)
-            ->send(Seat::query())
-            ->through([])
-            ->thenReturn();
+        $query = app(Pipeline::class)->send(Seat::query())->through([])->thenReturn();
         return successResponse(fetchData($query, $request->pageSize, SeatResource::class));
     }
 
@@ -50,5 +50,56 @@ class SeatController extends Controller
     {
         Seat::whereIn('id', $request->ids)->delete();
         return successResponse(msg: __('api.deleted_success'));
+    }
+
+    public function availableSeats($travelId)
+    {
+        $travel = Travel::with('bus.seats')->findOrFail($travelId);
+
+        $availableSeats = $travel->bus->seats()->where('status', 'available')->get();
+
+        return response()->json(['seats' => $availableSeats]);
+    }
+
+    public function reserveSeat(Request $request)
+    {
+        $request->validate([
+            'travel_id' => 'required|exists:trips,id',
+            'seat_id' => 'required|exists:seats,id',
+            'client_id' => 'required|exists:clients,id',
+        ]);
+
+        $seat = Seat::findOrFail($request->seat_id);
+
+        if ($seat->status === 'reserved') {
+            return response()->json(['message' => 'Seat already booked'], 400);
+        }
+
+        DB::transaction(function () use ($seat, $request) {
+            // Reserve seat
+            $seat->update(['status' => 'reserved']);
+
+            // Save reservation
+            SeatReservation::create([
+                'travel_id' => $request->travel_id,
+                'seat_id' => $seat->id,
+                'customer_id' => $request->customer_id,
+                'status' => 'confirmed',
+            ]);
+        });
+
+        return response()->json(['message' => 'Seat reserved successfully']);
+    }
+
+    public function cancelReservation($reservationId)
+    {
+        $reservation = SeatReservation::findOrFail($reservationId);
+
+        DB::transaction(function () use ($reservation) {
+            $reservation->update(['status' => 'canceled']);
+            $reservation->seat->update(['status' => 'available']);
+        });
+
+        return response()->json(['message' => 'Seat reservation canceled']);
     }
 }

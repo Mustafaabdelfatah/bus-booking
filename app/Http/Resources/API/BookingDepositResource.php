@@ -5,7 +5,7 @@ namespace App\Http\Resources\API;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class SeatResource extends JsonResource
+class BookingDepositResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,10 +16,11 @@ class SeatResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'bus' => new BusResource($this->bus),
-            'seat_number' => $this->seat_number,
-            'status' => $this->status->value,
-            'type' => $this->type->value,
+            'employee' => new EmployeeResource($this->user),
+            'total_bookings' => $this->total_bookings,
+            'total_amount' => $this->total_amount,
+            'is_settled' => $this->is_settled,
+            'created_at' => $this->created_at->format('Y-m-d H:i'),
         ];
     }
 }
