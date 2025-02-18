@@ -34,7 +34,6 @@ class PermissionController extends Controller implements HasMiddleware
     {
         $query = app(Pipeline::class)
             ->send(Permission::query())
-            ->through([NameFilter::class])
             ->thenReturn();
 
         return successResponse(fetchData($query, $request->pageSize, PermissionResource::class));
