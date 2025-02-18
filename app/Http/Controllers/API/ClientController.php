@@ -22,7 +22,7 @@ class ClientController extends Controller
     {
         $query = app(Pipeline::class)
             ->send(Client::query())
-            ->through([NameFilter::class, OrderByFilter::class])
+            // ->through([NameFilter::class, OrderByFilter::class])
             ->thenReturn();
         return successResponse(fetchData($query, $request->pageSize, ClientResource::class));
     }
