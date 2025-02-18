@@ -27,7 +27,7 @@ class RoleController extends Controller
     {
         $query = app(Pipeline::class)
         ->send(Role::with('permissions'))
-        ->through([NameFilter::class, OrderByFilter::class])
+        // ->through([NameFilter::class, OrderByFilter::class])
         ->thenReturn();
 
         return successResponse(fetchData($query, $request->pageSize, RoleResource::class));

@@ -26,7 +26,7 @@ class EmployeeController extends Controller
     {
         $query = app(Pipeline::class)
             ->send(Employee::query())
-            ->through([ OrderByFilter::class])
+            ->through([OrderByFilter::class])
             ->thenReturn();
 
         return successResponse(fetchData($query, $request->pageSize, EmployeeResource::class));
